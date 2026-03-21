@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1A2E4A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Caminhoneiro PRO</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;600;700;800&family=Barlow+Condensed:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1A2E4A;--navy2:#243d63;--amber:#F5A623;--amber2:#d4861a;
+  --green:#27AE60;--green2:#2ecc71;--red:#E74C3C;--red2:#ff6b6b;
+  --white:#fff;--g1:#F8F9FA;--g2:#E9ECEF;--g3:#CED4DA;--g4:#6C757D;
+  --text:#1a1a2e;--shadow:0 2px 12px rgba(0,0,0,.10);
+  --r:14px;--rs:8px;--nav:70px;
+  --f:'Barlow',sans-serif;--fd:'Barlow Condensed',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--f);background:var(--g1);color:var(--text);padding-bottom:var(--nav);overflow-x:hidden}
+
+/* SPLASH */
+#splash{position:fixed;inset:0;z-index:9999;background:var(--navy);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
+#splash .tk{font-size:64px;animation:bk 1s infinite}
+#splash h1{font-family:var(--fd);font-size:32px;font-weight:800;color:#fff}
+#splash h1 span{color:var(--amber)}
+#splash p{color:rgba(255,255,255,.5);font-size:14px}
+@keyframes bk{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.gone{opacity:0;pointer-events:none}
+
+/* HEADER */
+.hdr{background:var(--navy);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.hdr .brand{font-family:var(--fd);font-size:22px;font-weight:800;color:#fff}
+.hdr .brand b{color:var(--amber)}
+.hdr .info{font-size:11px;color:rgba(255,255,255,.6);text-align:right;line-height:1.5}
+.hdr .info strong{color:rgba(255,255,255,.9);font-size:12px;display:block}
+
+/* PAGES */
+.pg{display:none;animation:fi .2s ease}
+.pg.on{display:block}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* NAV */
+.nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:#fff;display:flex;border-top:1px solid var(--g2);z-index:200;box-shadow:0 -2px 12px rgba(0,0,0,.08)}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--g4);font-family:var(--f);font-size:9px;font-weight:700;padding:4px 2px}
+.nb .ic{font-size:20px;line-height:1}
+.nb.on{color:var(--navy)}
+
+/* CARD */
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);padding:18px;margin:12px 16px}
+.ctit{font-family:var(--fd);font-size:13px;font-weight:700;color:var(--g4);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+
+/* HOME BANNER */
+.banner{background:linear-gradient(135deg,var(--navy),var(--navy2));padding:20px 20px 24px}
+.banner .dt{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:4px}
+.banner .gt{font-family:var(--fd);font-size:26px;font-weight:800;color:#fff;margin-bottom:16px}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sc{background:rgba(255,255,255,.1);border-radius:var(--rs);padding:12px 14px;border:1px solid rgba(255,255,255,.12)}
+.sc .lb{font-size:11px;color:rgba(255,255,255,.55);margin-bottom:2px}
+.sc .vl{font-family:var(--fd);font-size:22px;font-weight:700;color:#fff}
+.vl.gr{color:var(--green2)} .vl.rd{color:var(--red2)} .vl.am{color:var(--amber)}
+
+.regbtn{display:flex;align-items:center;justify-content:center;margin:16px;padding:18px;background:var(--amber);color:var(--navy);font-family:var(--fd);font-size:17px;font-weight:800;border:none;border-radius:var(--r);box-shadow:0 4px 16px rgba(245,166,35,.4);cursor:pointer;width:calc(100% - 32px);text-transform:uppercase;transition:transform .1s}
+.regbtn:active{transform:scale(.97)}
+
+.pbar-wrap{margin:0 16px 12px}
+.pbar-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px}
+.pbar-row .lbl{font-weight:600}
+.pbar-row .pct{color:var(--g4)}
+.pbar{height:10px;background:var(--g2);border-radius:99px;overflow:hidden}
+.pfill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--green),var(--green2));transition:width .6s}
+
+/* HIST ITEMS */
+.hi{display:flex;align-items:flex-start;gap:12px;padding:13px 0;border-bottom:1px solid var(--g2)}
+.hi:last-child{border-bottom:none}
+.hi .hdate{min-width:44px;text-align:center;font-family:var(--fd);font-size:20px;font-weight:800;color:var(--navy);line-height:1}
+.hi .hdate small{display:block;font-size:10px;font-weight:700;color:var(--g4);text-transform:uppercase}
+.hi .hinfo{flex:1;min-width:0}
+.hi .hroute{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hi .hdet{font-size:11px;color:var(--g4);margin-top:2px}
+.hi .hright{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:80px}
+.luc{font-family:var(--fd);font-size:17px;font-weight:700;color:var(--green)}
+.luc.neg{color:var(--red)}
+.acts{display:flex;gap:5px}
+.bedit,.bdel{border:none;border-radius:6px;padding:5px 9px;font-size:12px;cursor:pointer;font-family:var(--f);font-weight:700}
+.bedit{background:rgba(26,46,74,.1);color:var(--navy)}
+.bdel{background:rgba(231,76,60,.1);color:var(--red)}
+
+/* FORMS */
+.ptit{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--text);padding:18px 20px 4px}
+.psub{font-size:13px;color:var(--g4);padding:0 20px 12px}
+.fsec{margin:0 16px 16px}
+.fld{margin-bottom:14px}
+.fld label{display:block;font-size:12px;font-weight:700;color:var(--navy2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.fld input,.fld select{width:100%;padding:14px 16px;border:1.5px solid var(--g3);border-radius:var(--rs);font-family:var(--f);font-size:16px;color:var(--text);background:#fff;appearance:none;-webkit-appearance:none;outline:none;transition:border-color .15s}
+.fld input:focus,.fld select:focus{border-color:var(--navy)}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pfx-wrap{position:relative}
+.pfx{position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:14px;font-weight:700;color:var(--g4);pointer-events:none}
+.pfx-wrap input{padding-left:40px}
+
+.sbtn{display:block;width:calc(100% - 32px);margin:8px 16px 20px;padding:18px;background:var(--navy);color:#fff;font-family:var(--fd);font-size:17px;font-weight:800;letter-spacing:.5px;border:none;border-radius:var(--r);cursor:pointer;text-transform:uppercase;box-shadow:0 4px 16px rgba(26,46,74,.3);transition:transform .1s}
+.sbtn:active{transform:scale(.98)}
+.sbtn.gn{background:var(--green);box-shadow:0 4px 16px rgba(39,174,96,.3)}
+.sbtn.am{background:var(--amber);color:var(--navy);box-shadow:0 4px 16px rgba(245,166,35,.3)}
+.sbtn.rd{background:var(--red);box-shadow:0 4px 16px rgba(231,76,60,.3)}
+
+/* EDIT BANNER */
+.ebanner{background:rgba(245,166,35,.12);border:2px solid var(--amber);border-radius:var(--rs);padding:12px 16px;margin:0 16px 12px;display:flex;align-items:center;justify-content:space-between}
+.ebanner span{font-size:13px;font-weight:700;color:var(--amber2)}
+.ebanner button{background:none;border:none;font-size:22px;cursor:pointer;color:var(--g4);line-height:1}
+
+/* CALC RESULT */
+.calcres{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--rs);padding:14px 16px;margin-top:12px;display:flex;justify-content:space-between;align-items:center}
+.calcres .crlb{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:2px}
+.calcres .crvl{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--amber)}
+
+/* ROUTE RESULT */
+.rbox{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:var(--r);padding:18px;margin:0 16px 16px}
+.rbox .rtit{font-size:12px;color:rgba(255,255,255,.55);margin-bottom:6px;text-transform:uppercase;letter-spacing:1px}
+.rbox .rroute{font-family:var(--fd);font-size:20px;font-weight:800;color:#fff;margin-bottom:12px}
+.rstats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.rst{text-align:center;background:rgba(255,255,255,.08);border-radius:8px;padding:10px 6px}
+.rst .rv{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--amber)}
+.rst .rl{font-size:10px;color:rgba(255,255,255,.5);margin-top:2px}
+.ruse{display:block;width:100%;margin-top:12px;padding:13px;background:var(--amber);color:var(--navy);font-family:var(--fd);font-size:15px;font-weight:800;border:none;border-radius:var(--rs);cursor:pointer;text-transform:uppercase}
+
+/* ROTA LIST ITEM */
+.rit{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--g2);cursor:pointer}
+.rit:last-child{border-bottom:none}
+.rit .riroute{font-size:14px;font-weight:600;color:var(--text)}
+.rit .ricust{font-size:11px;color:var(--amber2);font-weight:700;margin-top:2px}
+.rit .rikm{font-family:var(--fd);font-size:16px;font-weight:800;color:var(--navy)}
+
+/* RELATORIO */
+.sgrd2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 16px}
+.sbox{background:#fff;border-radius:var(--r);padding:16px;box-shadow:var(--shadow);text-align:center}
+.sbox .si{font-size:26px;margin-bottom:6px}
+.sbox .sv{font-family:var(--fd);font-size:22px;font-weight:800;color:var(--navy);line-height:1}
+.sbox .sv.gr{color:var(--green)} .sbox .sv.rd{color:var(--red)} .sbox .sv.am{color:var(--amber2)}
+.sbox .sl{font-size:11px;color:var(--g4);margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+
+.chart{display:flex;align-items:flex-end;justify-content:space-around;height:120px;padding:0 8px;gap:6px}
+.bcol{display:flex;flex-direction:column;align-items:center;flex:1}
+.bfill{width:100%;background:var(--amber);border-radius:4px 4px 0 0;min-height:4px;transition:height .6s}
+.blbl{font-size:10px;color:var(--g4);margin-top:4px;font-weight:700}
+.bvl{font-size:10px;font-weight:700;color:var(--text);margin-bottom:3px}
+
+.drow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--g2);font-size:14px}
+.drow:last-child{border-bottom:none;padding-bottom:0}
+.drow.tot{font-family:var(--fd);font-size:18px;font-weight:800;border-top:2px solid var(--navy);padding-top:14px;border-bottom:none;margin-top:4px}
+.dlbl{color:var(--navy2)}
+.dvl{font-weight:700}
+.dvl.gr{color:var(--green)} .dvl.rd{color:var(--red)} .dvl.nv{color:var(--navy)}
+
+.irow{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid var(--g2)}
+.irow:last-child{border-bottom:none}
+.irow .inm{font-size:14px;font-weight:600}
+.irow .inm small{display:block;font-size:11px;color:var(--g4);font-weight:400}
+.irow .ivl{font-family:var(--fd);font-size:17px;font-weight:800;color:var(--navy)}
+
+.mnav{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#fff;border-bottom:1px solid var(--g2)}
+.mnav button{background:none;border:none;font-size:26px;cursor:pointer;color:var(--navy);padding:4px 10px}
+.mnav .mlbl{font-family:var(--fd);font-size:18px;font-weight:800;color:var(--navy)}
+
+/* TOAST */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--navy2);color:#fff;padding:12px 24px;border-radius:99px;font-size:13px;font-weight:700;opacity:0;transition:all .3s;z-index:1000;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:var(--green)}
+
+/* EMPTY */
+.empty{text-align:center;padding:40px 20px;color:var(--g4)}
+.empty .ei{font-size:48px;margin-bottom:12px}
+.empty p{font-size:14px}
+
+/* CONFIG */
+.crow{display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--g2);cursor:pointer}
+.crow:last-child{border-bottom:none}
+.crow .cl{font-size:15px;font-weight:600}
+.crow .cs{font-size:12px;color:var(--g4);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- SPLASH -->
+<div id="splash">
+  <div class="tk">🚛</div>
+  <h1>Caminhoneiro <span>PRO</span></h1>
+  <p>Controle sua rota, seu lucro</p>
+</div>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="brand">🚛 Cam. <b>PRO</b></div>
+  <div class="info"><strong id="hModel">Configure seu caminhão</strong><span id="hDate"></span></div>
+</div>
+
+<!-- ========= HOME ========= -->
+<div class="pg on" id="pg-home">
+  <div class="banner">
+    <div class="dt" id="hDt"></div>
+    <div class="gt">Bom dia,<br>Caminhoneiro! 👊</div>
+    <div class="sgrid">
+      <div class="sc"><div class="lb">Receita hoje</div><div class="vl gr" id="sRH">R$ 0,00</div></div>
+      <div class="sc"><div class="lb">Custo hoje</div><div class="vl rd" id="sCH">R$ 0,00</div></div>
+      <div class="sc"><div class="lb">Saldo hoje</div><div class="vl am" id="sSH">R$ 0,00</div></div>
+      <div class="sc"><div class="lb">Lucro no mês</div><div class="vl gr" id="sLM">R$ 0,00</div></div>
+    </div>
+  </div>
+  <button class="regbtn" onclick="novaViagem()">＋ REGISTRAR VIAGEM</button>
+  <div class="pbar-wrap card" style="padding:16px">
+    <div class="ctit">Meta do dia</div>
+    <div class="pbar-row"><span class="lbl" id="metaLbl">R$ 0 / R$ 400</span><span class="pct" id="metaPct">0%</span></div>
+    <div class="pbar"><div class="pfill" id="metaBar" style="width:0%"></div></div>
+  </div>
+  <div class="card" style="margin-top:0">
+    <div class="ctit">Fretes do mês</div>
+    <div id="histList"><div class="empty"><div class="ei">🗺️</div><p>Nenhuma viagem registrada</p></div></div>
+  </div>
+</div>
+
+<!-- ========= VIAGEM ========= -->
+<div class="pg" id="pg-viagem">
+  <div class="ptit" id="vTit">Nova Viagem</div>
+  <div class="psub">Preencha os dados do frete</div>
+  <div class="ebanner" id="eBanner" style="display:none">
+    <span>✏️ Modo edição ativo</span>
+    <button onclick="cancelEdit()">✕</button>
+  </div>
+  <div class="fsec">
+    <div class="fld"><label>Data</label><input type="date" id="vData"></div>
+    <div class="frow">
+      <div class="fld"><label>Origem</label><input type="text" id="vOrig" placeholder="Cidade" list="cList" autocomplete="off"></div>
+      <div class="fld"><label>Destino</label><input type="text" id="vDest" placeholder="Cidade" list="cList" autocomplete="off"></div>
+    </div>
+    <datalist id="cList"></datalist>
+    <div class="fld">
+      <label>Tipo de Carga</label>
+      <select id="vCarga">
+        <option value="">Selecione...</option>
+        <option>Granel seco</option><option>Granel líquido</option><option>Carga geral</option>
+        <option>Frigorificado</option><option>Perigosa</option><option>Vivo (animal)</option>
+        <option>Veículos</option><option>Contêiner</option><option>Outro</option>
+      </select>
+    </div>
+    <div class="frow">
+      <div class="fld"><label>KM Rodados</label><input type="number" id="vKm" placeholder="0" inputmode="decimal"></div>
+      <div class="fld"><label>Valor do Frete</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vFrete" placeholder="0,00" inputmode="decimal"></div>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fld"><label>Pedágio</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vPed" placeholder="0,00" inputmode="decimal"></div>
+      </div>
+      <div class="fld"><label>Outros Custos</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vOut" placeholder="0,00" inputmode="decimal"></div>
+      </div>
+    </div>
+    <div class="fld"><label>Observação</label><input type="text" id="vObs" placeholder="Opcional"></div>
+  </div>
+  <button class="sbtn gn" id="btnSv" onclick="salvarViagem()">✓ SALVAR VIAGEM</button>
+  <button class="sbtn rd" id="btnCx" style="display:none;margin-top:0" onclick="cancelEdit()">✕ CANCELAR EDIÇÃO</button>
+</div>
+
+<!-- ========= DIESEL ========= -->
+<div class="pg" id="pg-diesel">
+  <div class="ptit">Combustível</div>
+  <div class="psub">Registre cada abastecimento</div>
+  <div class="card" style="margin-top:8px">
+    <div class="ctit">⚡ Calculadora Rápida</div>
+    <div class="frow">
+      <div class="fld"><label>Preço / Litro</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="cPreco" placeholder="6,50" inputmode="decimal" oninput="calcD()"></div>
+      </div>
+      <div class="fld"><label>Litros</label><input type="number" id="cLit" placeholder="0" inputmode="decimal" oninput="calcD()"></div>
+    </div>
+    <div class="calcres" id="calcRes" style="display:none">
+      <div><div class="crlb">Total a pagar</div><div class="crvl" id="cTotal">—</div></div>
+      <div style="text-align:right"><div class="crlb">Range estimado</div><div class="crvl" id="cRange">—</div></div>
+    </div>
+  </div>
+  <div class="fsec">
+    <div class="ctit" style="padding:0 0 10px">Registrar Abastecimento</div>
+    <div class="frow">
+      <div class="fld"><label>Data</label><input type="date" id="dData"></div>
+      <div class="fld"><label>KM Marcado</label><input type="number" id="dKm" placeholder="0" inputmode="decimal"></div>
+    </div>
+    <div class="fld"><label>Posto / Cidade</label><input type="text" id="dPosto" placeholder="Ex: Posto BR — Goiânia"></div>
+    <div class="frow">
+      <div class="fld"><label>Preço / Litro</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="dPreco" placeholder="0,00" inputmode="decimal"></div>
+      </div>
+      <div class="fld"><label>Litros</label><input type="number" id="dLit" placeholder="0" inputmode="decimal"></div>
+    </div>
+  </div>
+  <button class="sbtn am" onclick="salvarDiesel()">⛽ SALVAR ABASTECIMENTO</button>
+  <div class="card">
+    <div class="ctit">Últimos abastecimentos</div>
+    <div id="histDiesel"><div class="empty"><div class="ei">⛽</div><p>Nenhum abastecimento</p></div></div>
+  </div>
+</div>
+
+<!-- ========= ROTAS ========= -->
+<div class="pg" id="pg-rotas">
+  <div class="ptit">Calculadora de Rotas</div>
+  <div class="psub">KM médio + custo estimado de diesel</div>
+  <div class="fsec" style="margin-top:8px">
+    <div class="frow">
+      <div class="fld"><label>Origem</label><input type="text" id="rOrig" placeholder="Ex: São Paulo" list="rList" autocomplete="off" oninput="buscarRota()"></div>
+      <div class="fld"><label>Destino</label><input type="text" id="rDest" placeholder="Ex: Rio de Janeiro" list="rList" autocomplete="off" oninput="buscarRota()"></div>
+    </div>
+    <datalist id="rList"></datalist>
+  </div>
+
+  <div id="rotaOk" style="display:none">
+    <div class="rbox">
+      <div class="rtit">✅ Rota encontrada</div>
+      <div class="rroute" id="rLbl">—</div>
+      <div class="rstats">
+        <div class="rst"><div class="rv" id="rKm">—</div><div class="rl">Distância</div></div>
+        <div class="rst"><div class="rv" id="rDsl">—</div><div class="rl">Diesel est.</div></div>
+        <div class="rst"><div class="rv" id="rTmp">—</div><div class="rl">Tempo est.</div></div>
+      </div>
+      <button class="ruse" onclick="usarRota()">➕ USAR ESTA ROTA NO FRETE</button>
+    </div>
+  </div>
+
+  <div id="rotaNo" style="display:none" class="card">
+    <p style="text-align:center;font-size:13px;color:var(--g4);padding:6px 0">Rota não encontrada. Cadastre abaixo 👇</p>
+  </div>
+
+  <div class="card">
+    <div class="ctit">➕ Cadastrar Rota Personalizada</div>
+    <div class="frow">
+      <div class="fld"><label>Origem</label><input type="text" id="nrO" placeholder="Cidade"></div>
+      <div class="fld"><label>Destino</label><input type="text" id="nrD" placeholder="Cidade"></div>
+    </div>
+    <div class="fld"><label>Distância (km)</label><input type="number" id="nrK" placeholder="Ex: 430" inputmode="decimal"></div>
+    <button class="sbtn" style="width:100%;margin:0" onclick="addRota()">✓ SALVAR ROTA</button>
+  </div>
+
+  <div class="card">
+    <div class="ctit">Base de Rotas (<span id="totalRotas">0</span>)</div>
+    <div id="listaRotas"><div class="empty"><div class="ei">🗺️</div><p>Carregando...</p></div></div>
+  </div>
+</div>
+
+<!-- ========= RELATÓRIO ========= -->
+<div class="pg" id="pg-rel">
+  <div class="mnav">
+    <button onclick="changeMes(-1)">‹</button>
+    <div class="mlbl" id="relMes">—</div>
+    <button onclick="changeMes(1)">›</button>
+  </div>
+  <div class="sgrd2">
+    <div class="sbox"><div class="si">💰</div><div class="sv gr" id="rRec">R$0</div><div class="sl">Receita</div></div>
+    <div class="sbox"><div class="si">📦</div><div class="sv" id="rFrt">0</div><div class="sl">Fretes</div></div>
+    <div class="sbox"><div class="si">🛣️</div><div class="sv am" id="rKm">0 km</div><div class="sl">KM rodados</div></div>
+    <div class="sbox"><div class="si">⛽</div><div class="sv rd" id="rDsl">R$0</div><div class="sl">Diesel</div></div>
+  </div>
+  <div class="card">
+    <div class="ctit">📊 Resultado do Mês</div>
+    <div class="drow"><span class="dlbl">(+) Receita de Fretes</span><span class="dvl gr" id="dRec">R$ 0,00</span></div>
+    <div class="drow"><span class="dlbl">(−) Combustível</span><span class="dvl rd" id="dDsl">R$ 0,00</span></div>
+    <div class="drow"><span class="dlbl">(−) Pedágios</span><span class="dvl rd" id="dPed">R$ 0,00</span></div>
+    <div class="drow"><span class="dlbl">(−) Outros Custos</span><span class="dvl rd" id="dOut">R$ 0,00</span></div>
+    <div class="drow tot"><span class="dlbl">(=) LUCRO LÍQUIDO</span><span class="dvl nv" id="dLuc">R$ 0,00</span></div>
+  </div>
+  <div class="card">
+    <div class="ctit">Faturamento por Semana</div>
+    <div class="chart" id="chartW">
+      <div class="bcol"><div class="bvl">—</div><div class="bfill" style="height:4px"></div><div class="blbl">S1</div></div>
+      <div class="bcol"><div class="bvl">—</div><div class="bfill" style="height:4px"></div><div class="blbl">S2</div></div>
+      <div class="bcol"><div class="bvl">—</div><div class="bfill" style="height:4px"></div><div class="blbl">S3</div></div>
+      <div class="bcol"><div class="bvl">—</div><div class="bfill" style="height:4px"></div><div class="blbl">S4</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="ctit">Indicadores</div>
+    <div class="irow"><div class="inm">Custo por KM<small>quanto custa cada km rodado</small></div><div class="ivl" id="iCkm">—</div></div>
+    <div class="irow"><div class="inm">Frete médio<small>valor médio por viagem</small></div><div class="ivl" id="iFmd">—</div></div>
+    <div class="irow"><div class="inm">Margem de lucro<small>% que sobra do frete</small></div><div class="ivl" id="iMrg">—</div></div>
+    <div class="irow"><div class="inm">Consumo médio<small>km por litro este mês</small></div><div class="ivl" id="iCns">—</div></div>
+  </div>
+</div>
+
+<!-- ========= CONFIG ========= -->
+<div class="pg" id="pg-cfg">
+  <div class="ptit">Configurações</div>
+  <div class="card" style="margin-top:8px">
+    <div class="ctit">Meu Caminhão</div>
+    <div class="fld"><label>Modelo</label><input type="text" id="cfgMod" placeholder="Ex: Volvo FH 460"></div>
+    <div class="fld"><label>Placa</label><input type="text" id="cfgPla" placeholder="ABC-1234" oninput="this.value=this.value.toUpperCase()"></div>
+    <div class="frow">
+      <div class="fld"><label>Tanque (litros)</label><input type="number" id="cfgTnq" placeholder="600" inputmode="decimal"></div>
+      <div class="fld"><label>Consumo (km/L)</label><input type="number" id="cfgCns" placeholder="3.5" inputmode="decimal"></div>
+    </div>
+    <div class="fld"><label>Velocidade média (km/h)</label><input type="number" id="cfgVel" placeholder="80" inputmode="decimal"></div>
+  </div>
+  <div class="card">
+    <div class="ctit">Metas</div>
+    <div class="fld"><label>Meta diária (R$)</label>
+      <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="cfgMD" placeholder="400" inputmode="decimal"></div>
+    </div>
+    <div class="fld"><label>Meta mensal (R$)</label>
+      <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="cfgMM" placeholder="8000" inputmode="decimal"></div>
+    </div>
+  </div>
+  <button class="sbtn" onclick="salvarCfg()">✓ SALVAR CONFIGURAÇÕES</button>
+  <div class="card" style="margin-top:0">
+    <div class="ctit">Dados</div>
+    <div class="crow" onclick="exportar()">
+      <div><div class="cl">📤 Exportar Backup</div><div class="cs">Baixar todos os dados em JSON</div></div>
+      <span style="color:var(--g3);font-size:20px">›</span>
+    </div>
+    <div class="crow" onclick="if(confirm('Apagar TODOS os dados permanentemente?'))limpar()">
+      <div><div class="cl" style="color:var(--red)">🗑️ Apagar Tudo</div><div class="cs">Remove todos os registros</div></div>
+      <span style="color:var(--g3);font-size:20px">›</span>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="nav">
+  <button class="nb on" id="nb-home" onclick="goTo('pg-home','nb-home')"><span class="ic">🏠</span>Início</button>
+  <button class="nb" id="nb-viagem" onclick="goTo('pg-viagem','nb-viagem')"><span class="ic">📦</span>Viagem</button>
+  <button class="nb" id="nb-rotas" onclick="goTo('pg-rotas','nb-rotas')"><span class="ic">🗺️</span>Rotas</button>
+  <button class="nb" id="nb-rel" onclick="goTo('pg-rel','nb-rel')"><span class="ic">📊</span>Relatório</button>
+  <button class="nb" id="nb-cfg" onclick="goTo('pg-cfg','nb-cfg')"><span class="ic">⚙️</span>Config</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// =============================================
+// ROTAS BASE — 70 principais rotas do Brasil
+// =============================================
+var ROTAS = [
+  ["Belém","Fortaleza",1628],["Belém","Manaus",2373],["Belém","Palmas",1265],
+  ["Belém","Recife",2356],["Belém","São Luís",795],["Belo Horizonte","Brasília",747],
+  ["Belo Horizonte","Goiânia",906],["Belo Horizonte","Montes Claros",418],
+  ["Belo Horizonte","Rio de Janeiro",434],["Belo Horizonte","Salvador",1375],
+  ["Belo Horizonte","São Paulo",586],["Belo Horizonte","Uberlândia",389],
+  ["Belo Horizonte","Vitória",524],["Brasília","Campo Grande",1134],
+  ["Brasília","Cuiabá",1137],["Brasília","Goiânia",209],["Brasília","Palmas",973],
+  ["Brasília","Rio de Janeiro",1148],["Brasília","Salvador",1471],
+  ["Brasília","São Paulo",1015],["Campinas","Ribeirão Preto",237],
+  ["Campinas","São José dos Campos",185],["Campo Grande","Cuiabá",694],
+  ["Campo Grande","São Paulo",1006],["Cascavel","Foz do Iguaçu",143],
+  ["Cuiabá","Goiânia",930],["Cuiabá","Porto Velho",1456],["Cuiabá","São Paulo",1733],
+  ["Curitiba","Florianópolis",298],["Curitiba","Foz do Iguaçu",637],
+  ["Curitiba","Londrina",378],["Curitiba","Porto Alegre",711],["Curitiba","São Paulo",408],
+  ["Florianópolis","Porto Alegre",476],["Florianópolis","São Paulo",714],
+  ["Fortaleza","Recife",797],["Fortaleza","São Luís",1073],["Fortaleza","São Paulo",3052],
+  ["Fortaleza","Teresina",638],["Goiânia","Campo Grande",839],
+  ["João Pessoa","Natal",185],["João Pessoa","Recife",120],
+  ["Londrina","Maringá",105],["Londrina","São Paulo",449],
+  ["Manaus","Porto Velho",900],["Manaus","São Paulo",3858],
+  ["Maringá","São Paulo",536],["Natal","Recife",298],["Natal","São Paulo",3037],
+  ["Porto Alegre","Caxias do Sul",124],["Porto Alegre","Pelotas",251],
+  ["Porto Alegre","Santa Maria",292],["Porto Alegre","São Paulo",1109],
+  ["Recife","Salvador",839],["Recife","São Paulo",2663],
+  ["Ribeirão Preto","Uberlândia",225],["Rio de Janeiro","Curitiba",852],
+  ["Rio de Janeiro","Recife",2296],["Rio de Janeiro","Salvador",1648],
+  ["Rio de Janeiro","São Paulo",436],["Rio de Janeiro","Vitória",521],
+  ["Salvador","Fortaleza",1178],["Salvador","São Paulo",1960],
+  ["Santos","Campinas",167],["Santos","São Paulo",72],
+  ["São Luís","Teresina",446],["São Paulo","Brasília",1015],
+  ["São Paulo","Goiânia",926],["São Paulo","Rio de Janeiro",436],
+  ["São Paulo","Salvador",1960],["São Paulo","Uberlândia",569]
+];
+
+// =============================================
+// STATE
+// =============================================
+var S = {
+  cfg: {modelo:'',placa:'',tanque:600,consumo:3.5,vel:80,metaDia:400,metaMes:8000},
+  viagens: [],
+  diesel: [],
+  rotasExtra: []
+};
+var editId = null;
+var curMes = new Date().getMonth();
+var curAno = new Date().getFullYear();
+var rotaAtual = null;
+
+function load() {
+  try {
+    // Tenta chave nova primeiro, depois chave antiga (versão anterior)
+    var raw = localStorage.getItem('campro') || localStorage.getItem('caminhoeiro_pro');
+    if (raw) {
+      var p = JSON.parse(raw);
+      // Deep merge cfg
+      if (p.cfg) S.cfg = Object.assign(S.cfg, p.cfg);
+      if (p.viagens) S.viagens = p.viagens;
+      // suporte a 'diesel' e 'combustivel' (nome antigo)
+      if (p.diesel) S.diesel = p.diesel;
+      if (p.combustivel && !p.diesel) S.diesel = p.combustivel;
+      if (p.rotasExtra) S.rotasExtra = p.rotasExtra;
+      if (p.rotasCustom && !p.rotasExtra) S.rotasExtra = p.rotasCustom;
+      // compatibilidade: 'velocidade' virou 'vel'
+      if (p.cfg && p.cfg.velocidade && !p.cfg.vel) S.cfg.vel = p.cfg.velocidade;
+    }
+  } catch(e) {}
+}
+function save() {
+  try { localStorage.setItem('campro', JSON.stringify(S)); } catch(e) {}
+}
+
+// =============================================
+// UTILS
+// =============================================
+function brl(v) {
+  return 'R$ ' + Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function brls(v) {
+  var n = Number(v||0);
+  if (n >= 1000) return 'R$' + (n/1000).toFixed(1) + 'k';
+  return 'R$' + n.toFixed(0);
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2); }
+function norm(s) {
+  return String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
+}
+function dbr(iso) {
+  if (!iso) return '';
+  var p = iso.split('-'); return p[2]+'/'+p[1]+'/'+p[0];
+}
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' '+type : '');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.className = 'toast'; }, 2500);
+}
+
+// =============================================
+// NAVIGATION
+// =============================================
+function goTo(pgId, nbId) {
+  var pages = document.querySelectorAll('.pg');
+  for (var i=0; i<pages.length; i++) pages[i].classList.remove('on');
+  var nbs = document.querySelectorAll('.nb');
+  for (var i=0; i<nbs.length; i++) nbs[i].classList.remove('on');
+  document.getElementById(pgId).classList.add('on');
+  if (nbId) document.getElementById(nbId).classList.add('on');
+  window.scrollTo(0,0);
+  if (pgId === 'pg-home') renderHome();
+  if (pgId === 'pg-rel') renderRel();
+  if (pgId === 'pg-diesel') renderHistDiesel();
+  if (pgId === 'pg-cfg') loadCfg();
+  if (pgId === 'pg-rotas') renderRotas();
+}
+
+// =============================================
+// HOME
+// =============================================
+function renderHome() {
+  var td = today();
+  var tdParts = td.split('-');
+  var ty = parseInt(tdParts[0]), tm = parseInt(tdParts[1]);
+
+  var tV = S.viagens.filter(function(v){ return v.data === td; });
+  var rH = tV.reduce(function(s,v){ return s + Number(v.frete||0); }, 0);
+  var cHDiesel = S.diesel.filter(function(d){ return d.data === td; })
+    .reduce(function(s,d){ return s + Number(d.pL||0)*Number(d.lit||0); }, 0);
+  var cHViagem = tV.reduce(function(s,v){ return s + Number(v.ped||0) + Number(v.out||0); }, 0);
+  var cH = cHDiesel + cHViagem;
+  var sH = rH - cH;
+
+  var mV = S.viagens.filter(function(v){
+    var p = v.data.split('-');
+    return parseInt(p[0])===ty && parseInt(p[1])===tm;
+  });
+  var rM = mV.reduce(function(s,v){ return s+Number(v.frete||0); }, 0);
+  var dM = S.diesel.filter(function(d){
+    var p = d.data.split('-');
+    return parseInt(p[0])===ty && parseInt(p[1])===tm;
+  }).reduce(function(s,d){ return s+Number(d.pL||0)*Number(d.lit||0); }, 0);
+  var cM = dM + mV.reduce(function(s,v){ return s+Number(v.ped||0)+Number(v.out||0); }, 0);
+  var lM = rM - cM;
+
+  document.getElementById('sRH').textContent = brl(rH);
+  document.getElementById('sCH').textContent = brl(cH);
+  var sEl = document.getElementById('sSH');
+  sEl.textContent = brl(sH);
+  sEl.className = 'vl ' + (sH >= 0 ? 'gr' : 'rd');
+  var lEl = document.getElementById('sLM');
+  lEl.textContent = brl(lM);
+  lEl.className = 'vl ' + (lM >= 0 ? 'gr' : 'rd');
+
+  var meta = Number(S.cfg.metaDia)||400;
+  var pct = Math.min(100, (rH/meta)*100);
+  document.getElementById('metaLbl').textContent = brl(rH) + ' / ' + brl(meta);
+  document.getElementById('metaPct').textContent = pct.toFixed(0) + '%';
+  document.getElementById('metaBar').style.width = pct + '%';
+
+  var now = new Date();
+  document.getElementById('hDt').textContent = now.toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long'});
+
+  var sorted = S.viagens.slice().sort(function(a,b){ return b.data.localeCompare(a.data); }).slice(0,25);
+  var el = document.getElementById('histList');
+  if (!sorted.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">🗺️</div><p>Nenhuma viagem registrada</p></div>';
+    return;
+  }
+  var MS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  var html = '';
+  for (var i=0; i<sorted.length; i++) {
+    var v = sorted[i];
+    var luc = Number(v.frete||0) - Number(v.ped||0) - Number(v.out||0);
+    var dp = v.data.split('-');
+    var dd = dp[2], dm = MS[parseInt(dp[1])-1];
+    html += '<div class="hi">' +
+      '<div class="hdate">' + dd + '<small>' + dm + '</small></div>' +
+      '<div class="hinfo">' +
+        '<div class="hroute">' + (v.orig||'—') + ' → ' + (v.dest||'—') + '</div>' +
+        '<div class="hdet">' + (v.km ? v.km+' km' : '') + (v.carga ? ' · '+v.carga : '') + '</div>' +
+      '</div>' +
+      '<div class="hright">' +
+        '<div class="luc' + (luc<0?' neg':'') + '">' + brl(luc) + '</div>' +
+        '<div class="acts">' +
+          '<button class="bedit" onclick="editViagem(\'' + v.id + '\')">✏️ Editar</button>' +
+          '<button class="bdel" onclick="delViagem(\'' + v.id + '\')">🗑️</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+  }
+  el.innerHTML = html;
+}
+
+// =============================================
+// VIAGEM
+// =============================================
+function novaViagem() {
+  editId = null;
+  clearFormV();
+  document.getElementById('vTit').textContent = 'Nova Viagem';
+  document.getElementById('eBanner').style.display = 'none';
+  document.getElementById('btnSv').textContent = '✓ SALVAR VIAGEM';
+  document.getElementById('btnSv').className = 'sbtn gn';
+  document.getElementById('btnCx').style.display = 'none';
+  goTo('pg-viagem', 'nb-viagem');
+}
+
+function editViagem(id) {
+  var v = null;
+  for (var i=0; i<S.viagens.length; i++) {
+    if (S.viagens[i].id === id) { v = S.viagens[i]; break; }
+  }
+  if (!v) { toast('Viagem não encontrada'); return; }
+  editId = id;
+  document.getElementById('vData').value = v.data || '';
+  document.getElementById('vOrig').value = v.orig || '';
+  document.getElementById('vDest').value = v.dest || '';
+  document.getElementById('vCarga').value = v.carga || '';
+  document.getElementById('vKm').value = v.km || '';
+  document.getElementById('vFrete').value = v.frete || '';
+  document.getElementById('vPed').value = v.ped || '';
+  document.getElementById('vOut').value = v.out || '';
+  document.getElementById('vObs').value = v.obs || '';
+  document.getElementById('vTit').textContent = 'Editar Viagem';
+  document.getElementById('eBanner').style.display = 'flex';
+  document.getElementById('btnSv').textContent = '✓ SALVAR ALTERAÇÕES';
+  document.getElementById('btnSv').className = 'sbtn am';
+  document.getElementById('btnCx').style.display = 'block';
+  goTo('pg-viagem', 'nb-viagem');
+}
+
+function cancelEdit() {
+  editId = null;
+  clearFormV();
+  document.getElementById('vTit').textContent = 'Nova Viagem';
+  document.getElementById('eBanner').style.display = 'none';
+  document.getElementById('btnSv').textContent = '✓ SALVAR VIAGEM';
+  document.getElementById('btnSv').className = 'sbtn gn';
+  document.getElementById('btnCx').style.display = 'none';
+  goTo('pg-home', 'nb-home');
+}
+
+function salvarViagem() {
+  var data = document.getElementById('vData').value;
+  var frete = document.getElementById('vFrete').value;
+  if (!data) { toast('Informe a data'); return; }
+  if (!frete) { toast('Informe o valor do frete'); return; }
+  var obj = {
+    id: editId || uid(),
+    data: data,
+    orig: document.getElementById('vOrig').value,
+    dest: document.getElementById('vDest').value,
+    carga: document.getElementById('vCarga').value,
+    km: document.getElementById('vKm').value,
+    frete: parseFloat(frete) || 0,
+    ped: parseFloat(document.getElementById('vPed').value) || 0,
+    out: parseFloat(document.getElementById('vOut').value) || 0,
+    obs: document.getElementById('vObs').value
+  };
+  if (editId) {
+    for (var i=0; i<S.viagens.length; i++) {
+      if (S.viagens[i].id === editId) { S.viagens[i] = obj; break; }
+    }
+    toast('Viagem atualizada!', 'ok');
+  } else {
+    S.viagens.push(obj);
+    toast('Viagem salva!', 'ok');
+  }
+  save();
+  editId = null;
+  clearFormV();
+  document.getElementById('vTit').textContent = 'Nova Viagem';
+  document.getElementById('eBanner').style.display = 'none';
+  document.getElementById('btnSv').textContent = '✓ SALVAR VIAGEM';
+  document.getElementById('btnSv').className = 'sbtn gn';
+  document.getElementById('btnCx').style.display = 'none';
+  goTo('pg-home', 'nb-home');
+}
+
+function delViagem(id) {
+  if (!confirm('Excluir esta viagem?')) return;
+  S.viagens = S.viagens.filter(function(v){ return v.id !== id; });
+  save(); renderHome(); toast('Viagem excluída');
+}
+
+function clearFormV() {
+  var ids = ['vData','vOrig','vDest','vCarga','vKm','vFrete','vPed','vOut','vObs'];
+  for (var i=0; i<ids.length; i++) {
+    var el = document.getElementById(ids[i]);
+    if (el) el.value = '';
+  }
+  document.getElementById('vData').value = today();
+}
+
+// =============================================
+// DIESEL
+// =============================================
+function calcD() {
+  var p = parseFloat(document.getElementById('cPreco').value) || 0;
+  var l = parseFloat(document.getElementById('cLit').value) || 0;
+  if (!p || !l) { document.getElementById('calcRes').style.display='none'; return; }
+  document.getElementById('calcRes').style.display = 'flex';
+  document.getElementById('cTotal').textContent = brl(p*l);
+  var cons = Number(S.cfg.consumo) || 3.5;
+  document.getElementById('cRange').textContent = (l*cons).toFixed(0) + ' km';
+}
+
+function salvarDiesel() {
+  var data = document.getElementById('dData').value;
+  var pL = document.getElementById('dPreco').value;
+  var lit = document.getElementById('dLit').value;
+  if (!data || !pL || !lit) { toast('Preencha data, preço e litros'); return; }
+  S.diesel.push({
+    id: uid(), data: data,
+    posto: document.getElementById('dPosto').value,
+    pL: parseFloat(pL), lit: parseFloat(lit),
+    km: document.getElementById('dKm').value
+  });
+  save(); toast('Abastecimento salvo!', 'ok');
+  ['dData','dKm','dPosto','dPreco','dLit'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('dData').value = today();
+  renderHistDiesel();
+}
+
+function renderHistDiesel() {
+  var sorted = S.diesel.slice().sort(function(a,b){ return b.data.localeCompare(a.data); }).slice(0,10);
+  var el = document.getElementById('histDiesel');
+  if (!sorted.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">⛽</div><p>Nenhum abastecimento</p></div>';
+    return;
+  }
+  var html = '';
+  for (var i=0; i<sorted.length; i++) {
+    var d = sorted[i];
+    var tot = Number(d.pL||0) * Number(d.lit||0);
+    html += '<div class="hi">' +
+      '<div class="hdate" style="font-size:13px">' + dbr(d.data) + '</div>' +
+      '<div class="hinfo">' +
+        '<div class="hroute">' + (d.posto||'Posto') + '</div>' +
+        '<div class="hdet">' + d.lit + 'L × R$' + Number(d.pL).toFixed(2) + (d.km ? ' · '+d.km+' km' : '') + '</div>' +
+      '</div>' +
+      '<div class="hright">' +
+        '<div class="luc">' + brl(tot) + '</div>' +
+        '<div class="acts"><button class="bdel" onclick="delDiesel(\'' + d.id + '\')">🗑️</button></div>' +
+      '</div>' +
+    '</div>';
+  }
+  el.innerHTML = html;
+}
+
+function delDiesel(id) {
+  if (!confirm('Excluir?')) return;
+  S.diesel = S.diesel.filter(function(d){ return d.id !== id; });
+  save(); renderHistDiesel(); toast('Excluído');
+}
+
+// =============================================
+// ROTAS
+// =============================================
+function todasRotas() {
+  var lista = [];
+  for (var i=0; i<ROTAS.length; i++) {
+    lista.push({orig:ROTAS[i][0], dest:ROTAS[i][1], km:ROTAS[i][2], custom:false});
+  }
+  var extras = S.rotasExtra || [];
+  for (var i=0; i<extras.length; i++) {
+    lista.push({orig:extras[i].orig, dest:extras[i].dest, km:extras[i].km, id:extras[i].id, custom:true});
+  }
+  return lista;
+}
+
+function buscarRota() {
+  var o = norm(document.getElementById('rOrig').value);
+  var d = norm(document.getElementById('rDest').value);
+  document.getElementById('rotaOk').style.display = 'none';
+  document.getElementById('rotaNo').style.display = 'none';
+  if (!o || !d || o.length < 2 || d.length < 2) return;
+  var todas = todasRotas();
+  var found = null;
+  for (var i=0; i<todas.length; i++) {
+    var r = todas[i];
+    var ro = norm(r.orig), rd = norm(r.dest);
+    if ((ro===o && rd===d) || (ro===d && rd===o)) { found=r; break; }
+  }
+  if (found) {
+    rotaAtual = found;
+    var cons = Number(S.cfg.consumo) || 3.5;
+    var litros = found.km / cons;
+    var pMed = 6.5;
+    if (S.diesel.length > 0) {
+      var tot = S.diesel.reduce(function(s,d){ return s+Number(d.pL||0); },0);
+      pMed = tot / S.diesel.length;
+    }
+    var dEst = litros * pMed;
+    var vel = Number(S.cfg.vel) || 80;
+    var horas = found.km / vel;
+    var hStr = '';
+    if (horas >= 1) { hStr = Math.floor(horas)+'h'+Math.round((horas%1)*60)+'min'; }
+    else { hStr = Math.round(horas*60)+'min'; }
+    document.getElementById('rLbl').textContent = found.orig + ' → ' + found.dest;
+    document.getElementById('rKm').textContent = found.km.toLocaleString('pt-BR') + ' km';
+    document.getElementById('rDsl').textContent = brls(dEst);
+    document.getElementById('rTmp').textContent = hStr;
+    document.getElementById('rotaOk').style.display = 'block';
+  } else {
+    rotaAtual = null;
+    document.getElementById('rotaNo').style.display = 'block';
+  }
+}
+
+function usarRota() {
+  if (!rotaAtual) return;
+  document.getElementById('vOrig').value = rotaAtual.orig;
+  document.getElementById('vDest').value = rotaAtual.dest;
+  document.getElementById('vKm').value = rotaAtual.km;
+  editId = null;
+  document.getElementById('vTit').textContent = 'Nova Viagem';
+  document.getElementById('eBanner').style.display = 'none';
+  document.getElementById('btnSv').textContent = '✓ SALVAR VIAGEM';
+  document.getElementById('btnSv').className = 'sbtn gn';
+  document.getElementById('btnCx').style.display = 'none';
+  goTo('pg-viagem', 'nb-viagem');
+  toast('Rota carregada! Preencha o valor do frete.', 'ok');
+}
+
+function addRota() {
+  var o = document.getElementById('nrO').value.trim();
+  var d = document.getElementById('nrD').value.trim();
+  var k = parseFloat(document.getElementById('nrK').value);
+  if (!o || !d || !k) { toast('Preencha origem, destino e km'); return; }
+  if (!S.rotasExtra) S.rotasExtra = [];
+  S.rotasExtra.push({id:uid(), orig:o, dest:d, km:k});
+  save();
+  document.getElementById('nrO').value = '';
+  document.getElementById('nrD').value = '';
+  document.getElementById('nrK').value = '';
+  renderRotas();
+  toast('Rota cadastrada!', 'ok');
+}
+
+function delRota(id) {
+  if (!confirm('Excluir rota personalizada?')) return;
+  S.rotasExtra = (S.rotasExtra||[]).filter(function(r){ return r.id !== id; });
+  save(); renderRotas(); toast('Rota excluída');
+}
+
+function renderRotas() {
+  // Fill datalists
+  var cidades = {};
+  var todas = todasRotas();
+  for (var i=0; i<todas.length; i++) {
+    cidades[todas[i].orig] = 1;
+    cidades[todas[i].dest] = 1;
+  }
+  var cidLista = Object.keys(cidades).sort();
+  var opts = '';
+  for (var i=0; i<cidLista.length; i++) opts += '<option value="' + cidLista[i] + '">';
+  ['cList','rList'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = opts;
+  });
+
+  // Update total count
+  document.getElementById('totalRotas').textContent = todas.length;
+
+  // Render list
+  var lista = document.getElementById('listaRotas');
+  if (!todas.length) {
+    lista.innerHTML = '<div class="empty"><div class="ei">🗺️</div><p>Nenhuma rota</p></div>';
+    return;
+  }
+  var html = '';
+  // Custom first
+  var extras = S.rotasExtra || [];
+  for (var i=0; i<extras.length; i++) {
+    var r = extras[i];
+    html += '<div class="rit">' +
+      '<div onclick="selRota(\'' + r.orig + '\',\'' + r.dest + '\',' + r.km + ')">' +
+        '<div class="riroute">' + r.orig + ' → ' + r.dest + '</div>' +
+        '<div class="ricust">⭐ Personalizada</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:8px">' +
+        '<div class="rikm">' + r.km + ' km</div>' +
+        '<button class="bdel" onclick="delRota(\'' + r.id + '\')">🗑️</button>' +
+      '</div>' +
+    '</div>';
+  }
+  // Base routes (first 40)
+  var base = ROTAS.slice(0, 40);
+  for (var i=0; i<base.length; i++) {
+    var r = base[i];
+    html += '<div class="rit" onclick="selRota(\'' + r[0] + '\',\'' + r[1] + '\',' + r[2] + ')">' +
+      '<div class="riroute">' + r[0] + ' → ' + r[1] + '</div>' +
+      '<div class="rikm">' + r[2] + ' km</div>' +
+    '</div>';
+  }
+  lista.innerHTML = html;
+}
+
+function selRota(o, d, k) {
+  document.getElementById('rOrig').value = o;
+  document.getElementById('rDest').value = d;
+  buscarRota();
+  window.scrollTo(0,0);
+}
+
+// =============================================
+// RELATÓRIO
+// =============================================
+function changeMes(delta) {
+  curMes += delta;
+  if (curMes > 11) { curMes = 0; curAno++; }
+  if (curMes < 0) { curMes = 11; curAno--; }
+  renderRel();
+}
+
+function renderRel() {
+  var MS = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  document.getElementById('relMes').textContent = MS[curMes] + ' ' + curAno;
+  var V = S.viagens.filter(function(v){
+    var p = v.data.split('-');
+    return parseInt(p[0])===curAno && parseInt(p[1])===(curMes+1);
+  });
+  var D = S.diesel.filter(function(d){
+    var p = d.data.split('-');
+    return parseInt(p[0])===curAno && parseInt(p[1])===(curMes+1);
+  });
+  var rec = V.reduce(function(s,v){ return s+Number(v.frete||0); },0);
+  var dsl = D.reduce(function(s,d){ return s+Number(d.pL||0)*Number(d.lit||0); },0);
+  var ped = V.reduce(function(s,v){ return s+Number(v.ped||0); },0);
+  var out = V.reduce(function(s,v){ return s+Number(v.out||0); },0);
+  var luc = rec - dsl - ped - out;
+  var km = V.reduce(function(s,v){ return s+Number(v.km||0); },0);
+  var lit = D.reduce(function(s,d){ return s+Number(d.lit||0); },0);
+
+  document.getElementById('rRec').textContent = brls(rec);
+  document.getElementById('rFrt').textContent = V.length;
+  document.getElementById('rKm').textContent = km.toLocaleString('pt-BR') + ' km';
+  document.getElementById('rDsl').textContent = brls(dsl);
+  document.getElementById('dRec').textContent = brl(rec);
+  document.getElementById('dDsl').textContent = brl(dsl);
+  document.getElementById('dPed').textContent = brl(ped);
+  document.getElementById('dOut').textContent = brl(out);
+  var lEl = document.getElementById('dLuc');
+  lEl.textContent = brl(luc);
+  lEl.className = 'dvl ' + (luc >= 0 ? 'gr' : 'rd');
+  document.getElementById('iCkm').textContent = km>0 ? 'R$ '+((dsl+ped+out)/km).toFixed(2)+'/km' : '—';
+  document.getElementById('iFmd').textContent = V.length>0 ? brl(rec/V.length) : '—';
+  document.getElementById('iMrg').textContent = rec>0 ? (luc/rec*100).toFixed(1)+'%' : '—';
+  document.getElementById('iCns').textContent = lit>0&&km>0 ? (km/lit).toFixed(2)+' km/L' : '—';
+
+  var wks = [0,0,0,0];
+  for (var i=0; i<V.length; i++) {
+    var dp = V[i].data.split('-');
+    var day = parseInt(dp[2]);
+    var w = Math.min(3, Math.floor((day-1)/7));
+    wks[w] += Number(V[i].frete||0);
+  }
+  var mx = Math.max.apply(null, wks.concat([1]));
+  var ch = '';
+  for (var i=0; i<4; i++) {
+    ch += '<div class="bcol">' +
+      '<div class="bvl">' + (wks[i]>0 ? brls(wks[i]) : '—') + '</div>' +
+      '<div class="bfill" style="height:' + (wks[i]/mx*100) + 'px"></div>' +
+      '<div class="blbl">S'+(i+1)+'</div>' +
+    '</div>';
+  }
+  document.getElementById('chartW').innerHTML = ch;
+}
+
+// =============================================
+// CONFIG
+// =============================================
+function loadCfg() {
+  var c = S.cfg;
+  document.getElementById('cfgMod').value = c.modelo || '';
+  document.getElementById('cfgPla').value = c.placa || '';
+  document.getElementById('cfgTnq').value = c.tanque || 600;
+  document.getElementById('cfgCns').value = c.consumo || 3.5;
+  document.getElementById('cfgVel').value = c.vel || c.velocidade || 80;
+  document.getElementById('cfgMD').value = c.metaDia || 400;
+  document.getElementById('cfgMM').value = c.metaMes || 8000;
+}
+
+function salvarCfg() {
+  S.cfg = {
+    modelo: document.getElementById('cfgMod').value,
+    placa: document.getElementById('cfgPla').value.toUpperCase(),
+    tanque: parseFloat(document.getElementById('cfgTnq').value) || 600,
+    consumo: parseFloat(document.getElementById('cfgCns').value) || 3.5,
+    vel: parseFloat(document.getElementById('cfgVel').value) || 80,
+    metaDia: parseFloat(document.getElementById('cfgMD').value) || 400,
+    metaMes: parseFloat(document.getElementById('cfgMM').value) || 8000
+  };
+  save(); updateHeader(); toast('Configurações salvas!', 'ok');
+}
+
+function updateHeader() {
+  var c = S.cfg;
+  var model = c.modelo ? c.modelo + (c.placa ? ' ('+c.placa+')' : '') : 'Configure seu caminhão';
+  document.getElementById('hModel').textContent = model;
+  document.getElementById('hDate').textContent = new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function exportar() {
+  var blob = new Blob([JSON.stringify(S,null,2)], {type:'application/json'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'campro_backup_' + today() + '.json';
+  a.click();
+  toast('Backup exportado!', 'ok');
+}
+
+function limpar() {
+  S.viagens = []; S.diesel = []; S.rotasExtra = [];
+  save(); renderHome(); toast('Dados apagados');
+}
+
+// =============================================
+// INIT
+// =============================================
+document.addEventListener('DOMContentLoaded', function() {
+  load();
+  document.getElementById('vData').value = today();
+  document.getElementById('dData').value = today();
+  updateHeader();
+  renderHome();
+  setTimeout(function(){
+    document.getElementById('splash').classList.add('gone');
+    setTimeout(function(){ 
+      var s = document.getElementById('splash');
+      if (s) s.remove();
+    }, 400);
+  }, 1600);
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function(){});
+}
+</script>
+</body>
+</html>
