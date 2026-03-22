@@ -325,8 +325,8 @@ body{font-family:var(--f);background:var(--g1);color:var(--text);padding-bottom:
       <div class="rtit">✅ Rota encontrada</div>
       <div class="rroute" id="rLbl">—</div>
       <div class="rstats">
-        <div class="rst"><div class="rv" id="rKm">—</div><div class="rl">Distância</div></div>
-        <div class="rst"><div class="rv" id="rDsl">—</div><div class="rl">Diesel est.</div></div>
+        <div class="rst"><div class="rv" id="rRotaKm">—</div><div class="rl">Distância</div></div>
+        <div class="rst"><div class="rv" id="rRotaDsl">—</div><div class="rl">Diesel est.</div></div>
         <div class="rst"><div class="rv" id="rTmp">—</div><div class="rl">Tempo est.</div></div>
       </div>
       <button class="ruse" onclick="usarRota()">➕ USAR ESTA ROTA NO FRETE</button>
@@ -699,7 +699,7 @@ function salvarViagem() {
     orig: document.getElementById('vOrig').value,
     dest: document.getElementById('vDest').value,
     carga: document.getElementById('vCarga').value,
-    km: document.getElementById('vKm').value,
+    km: parseFloat(document.getElementById('vKm').value) || 0,
     frete: parseFloat(frete) || 0,
     dsl: parseFloat(document.getElementById('vDsl').value) || 0,
     ped: parseFloat(document.getElementById('vPed').value) || 0,
@@ -849,8 +849,8 @@ function buscarRota() {
     if (horas >= 1) { hStr = Math.floor(horas)+'h'+Math.round((horas%1)*60)+'min'; }
     else { hStr = Math.round(horas*60)+'min'; }
     document.getElementById('rLbl').textContent = found.orig + ' → ' + found.dest;
-    document.getElementById('rKm').textContent = found.km.toLocaleString('pt-BR') + ' km';
-    document.getElementById('rDsl').textContent = brls(dEst);
+    document.getElementById('rRotaKm').textContent = found.km.toLocaleString('pt-BR') + ' km';
+    document.getElementById('rRotaDsl').textContent = brls(dEst);
     document.getElementById('rTmp').textContent = hStr;
     document.getElementById('rotaOk').style.display = 'block';
   } else {
