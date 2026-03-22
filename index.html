@@ -251,12 +251,18 @@ body{font-family:var(--f);background:var(--g1);color:var(--text);padding-bottom:
       </div>
     </div>
     <div class="frow">
+      <div class="fld"><label>Diesel gasto (R$)</label>
+        <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vDsl" placeholder="0,00" inputmode="decimal"></div>
+      </div>
       <div class="fld"><label>Pedágio</label>
         <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vPed" placeholder="0,00" inputmode="decimal"></div>
       </div>
+    </div>
+    <div class="frow">
       <div class="fld"><label>Outros Custos</label>
         <div class="pfx-wrap"><span class="pfx">R$</span><input type="number" id="vOut" placeholder="0,00" inputmode="decimal"></div>
       </div>
+      <div class="fld"></div>
     </div>
     <div class="fld"><label>Observação</label><input type="text" id="vObs" placeholder="Opcional"></div>
   </div>
@@ -567,7 +573,7 @@ function renderHome() {
   var rH = tV.reduce(function(s,v){ return s + Number(v.frete||0); }, 0);
   var cHDiesel = S.diesel.filter(function(d){ return d.data === td; })
     .reduce(function(s,d){ return s + Number(d.pL||0)*Number(d.lit||0); }, 0);
-  var cHViagem = tV.reduce(function(s,v){ return s + Number(v.ped||0) + Number(v.out||0); }, 0);
+  var cHViagem = tV.reduce(function(s,v){ return s + Number(v.dsl||0) + Number(v.ped||0) + Number(v.out||0); }, 0);
   var cH = cHDiesel + cHViagem;
   var sH = rH - cH;
 
@@ -580,7 +586,7 @@ function renderHome() {
     var p = d.data.split('-');
     return parseInt(p[0])===ty && parseInt(p[1])===tm;
   }).reduce(function(s,d){ return s+Number(d.pL||0)*Number(d.lit||0); }, 0);
-  var cM = dM + mV.reduce(function(s,v){ return s+Number(v.ped||0)+Number(v.out||0); }, 0);
+  var cM = dM + mV.reduce(function(s,v){ return s+Number(v.dsl||0)+Number(v.ped||0)+Number(v.out||0); }, 0);
   var lM = rM - cM;
 
   document.getElementById('sRH').textContent = brl(rH);
@@ -611,7 +617,7 @@ function renderHome() {
   var html = '';
   for (var i=0; i<sorted.length; i++) {
     var v = sorted[i];
-    var luc = Number(v.frete||0) - Number(v.ped||0) - Number(v.out||0);
+    var luc = Number(v.frete||0) - Number(v.dsl||0) - Number(v.ped||0) - Number(v.out||0);
     var dp = v.data.split('-');
     var dd = dp[2], dm = MS[parseInt(dp[1])-1];
     html += '<div class="hi">' +
@@ -659,6 +665,7 @@ function editViagem(id) {
   document.getElementById('vCarga').value = v.carga || '';
   document.getElementById('vKm').value = v.km || '';
   document.getElementById('vFrete').value = v.frete || '';
+  document.getElementById('vDsl').value = v.dsl || '';
   document.getElementById('vPed').value = v.ped || '';
   document.getElementById('vOut').value = v.out || '';
   document.getElementById('vObs').value = v.obs || '';
@@ -694,6 +701,7 @@ function salvarViagem() {
     carga: document.getElementById('vCarga').value,
     km: document.getElementById('vKm').value,
     frete: parseFloat(frete) || 0,
+    dsl: parseFloat(document.getElementById('vDsl').value) || 0,
     ped: parseFloat(document.getElementById('vPed').value) || 0,
     out: parseFloat(document.getElementById('vOut').value) || 0,
     obs: document.getElementById('vObs').value
@@ -725,7 +733,7 @@ function delViagem(id) {
 }
 
 function clearFormV() {
-  var ids = ['vData','vOrig','vDest','vCarga','vKm','vFrete','vPed','vOut','vObs'];
+  var ids = ['vData','vOrig','vDest','vCarga','vKm','vFrete','vDsl','vPed','vOut','vObs'];
   for (var i=0; i<ids.length; i++) {
     var el = document.getElementById(ids[i]);
     if (el) el.value = '';
@@ -969,7 +977,9 @@ function renderRel() {
     return parseInt(p[0])===curAno && parseInt(p[1])===(curMes+1);
   });
   var rec = V.reduce(function(s,v){ return s+Number(v.frete||0); },0);
-  var dsl = D.reduce(function(s,d){ return s+Number(d.pL||0)*Number(d.lit||0); },0);
+  var dslAba = D.reduce(function(s,d){ return s+Number(d.pL||0)*Number(d.lit||0); },0);
+  var dslViagem = V.reduce(function(s,v){ return s+Number(v.dsl||0); },0);
+  var dsl = dslAba + dslViagem;
   var ped = V.reduce(function(s,v){ return s+Number(v.ped||0); },0);
   var out = V.reduce(function(s,v){ return s+Number(v.out||0); },0);
   var luc = rec - dsl - ped - out;
